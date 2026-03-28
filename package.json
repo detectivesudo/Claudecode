@@ -1,0 +1,18 @@
+{
+  "name": "shopify-cart",
+  "version": "1.0.0",
+  "description": "Reusable Node.js module for Shopify AJAX cart operations with cookie-jar support",
+  "main": "src/shopify-cart.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "example": "node examples/usage.js"
+  },
+  "dependencies": {
+    "tough-cookie": "^4.1.4"
+  },
+  "keywords": ["shopify", "cart", "ajax", "checkout"],
+  "license": "TBD"
+}
