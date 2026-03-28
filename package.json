@@ -8,7 +8,8 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "example": "node examples/usage.js"
+    "example": "node examples/usage.js",
+    "monitor": "node examples/monitor.js"
   },
   "dependencies": {
     "tough-cookie": "^4.1.4"
