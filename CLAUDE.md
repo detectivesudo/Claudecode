@@ -4,15 +4,36 @@ This file provides guidance to AI assistants (Claude and others) working in this
 
 ## Project Overview
 
-**Claudecode** is a project in its initial state. The repository currently contains only a README and this documentation file. As the project grows, this file should be updated to reflect the actual codebase structure, tooling, and conventions.
+**Claudecode** is a JavaScript library providing Shopify AJAX cart utilities. The core module (`src/shopify-cart.js`) wraps Shopify's storefront cart endpoints with cookie-based session management via `tough-cookie`.
 
-## Repository State (as of 2026-03-20)
+## Repository State (as of 2026-03-28)
 
-- **Language/Framework**: Not yet established
-- **Dependencies**: None present
+- **Language/Runtime**: JavaScript (ES Modules, no transpilation configured)
+- **Dependencies**: `tough-cookie` (cookie jar management)
 - **Tests**: None present
 - **CI/CD**: None configured
-- **Main branch**: `main` (remote), `master` (local default)
+- **Main branch**: `main`
+
+## Codebase Structure
+
+```
+Claudecode/
+├── src/
+│   └── shopify-cart.js   # Core Shopify cart module (ES module)
+├── README.md
+└── CLAUDE.md
+```
+
+### `src/shopify-cart.js`
+
+Exports:
+- `ShopifyCartError` — custom Error subclass with `code` and `status` fields
+- `createShopifyCart(storeUrl, options?)` — factory returning a cart client with three methods:
+  - `addVariant(variantId, quantity?)` — POST `/cart/add.js`
+  - `getCart()` — GET `/cart.js`
+  - `getCheckoutUrl()` — fetches cart token and returns the checkout URL
+
+All HTTP calls go through `fetchWithCookies` (module-private), which reads/writes a shared `CookieJar` so session cookies persist across requests within a single cart instance.
 
 ## Git Workflow
 
@@ -77,52 +98,55 @@ Before taking any action, consider:
 
 ## Setting Up the Project
 
-Since the project is in its early stages, the setup steps will evolve. At minimum:
-
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone https://github.com/detectivesudo/Claudecode.git
 cd Claudecode
 
-# Switch to the correct feature branch (if working on a task)
+# Switch to the correct feature branch
 git checkout claude/<branch-name>
+
+# Install dependencies (once a package.json is added)
+npm install
 ```
 
-When a language/framework is chosen, update this section with:
-- Dependency installation commands
-- Environment variable setup (`.env.example`)
-- Database/service setup steps
-- How to start the development server
+The project currently has no `package.json`. When adding one, include `tough-cookie` as a dependency and configure `"type": "module"` since the source uses ES module syntax.
 
 ## Testing
 
 No test suite exists yet. When one is introduced, document here:
-- The testing framework (e.g., Jest, pytest, Go test)
+- The testing framework (e.g., Jest with `--experimental-vm-modules` for ESM, Vitest)
 - How to run all tests: `<command>`
 - How to run a single test file: `<command>`
 - Coverage requirements or thresholds
 
 ## Build & Deployment
 
-No build or deployment pipeline exists yet. When configured, document here:
+No build or deployment pipeline exists yet. The module is written as a native ES module and requires no compilation step. When a bundler or publish workflow is added, document here:
 - Build command
 - Deployment targets and commands
 - Environment-specific configuration
 
 ## Code Style & Linting
 
-No linters or formatters are configured yet. When added, document here:
-- Linter (ESLint, Ruff, Clippy, etc.) and run command
-- Formatter (Prettier, Black, rustfmt, etc.) and run command
-- Whether formatting is enforced in CI
+No linters or formatters are configured yet. The existing code uses:
+- 2-space indentation
+- Single quotes for strings
+- `async`/`await` throughout (no `.then()` chains)
+- Named exports for public API; unexported helper functions for internals
 
-## Key Conventions (to be filled as the project grows)
+When a linter is added (e.g., ESLint + Prettier), document the run commands here.
+
+## Key Conventions
 
 | Area | Convention |
 |---|---|
 | Branching | `claude/<description>-<id>` |
 | Commit messages | Imperative mood, present tense |
 | PR target | `main` |
+| Module format | ES Modules (`import`/`export`) |
+| Error handling | Throw `ShopifyCartError` with a `code` string constant |
+| HTTP | Use `fetchWithCookies` for all requests so the cookie jar stays in sync |
 
 ---
 
