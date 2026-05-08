@@ -8,10 +8,14 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "example": "node examples/usage.js"
+    "example": "node examples/usage.js",
+    "test": "node --test"
   },
   "dependencies": {
     "tough-cookie": "^4.1.4"
+  },
+  "devDependencies": {
+    "undici": "^6.25.0"
   },
   "keywords": ["shopify", "cart", "ajax", "checkout"],
   "license": "TBD"
