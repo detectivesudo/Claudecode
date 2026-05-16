@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import os
 import sys
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -12,6 +11,7 @@ try:
 except ImportError:
     sys.exit("Error: dnspython not installed. Run: pip install dnspython")
 
+import os
 DEFAULT_WORDLIST = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "wordlists", "subdomains-small.txt"
 )
@@ -56,11 +56,11 @@ def main():
         if wildcard_ips:
             print(f"[!] Wildcard DNS detected (resolves to {wildcard_ips}). Results may be noisy.\n")
 
-    if not os.path.isfile(args.wordlist):
+    try:
+        with open(args.wordlist) as f:
+            prefixes = [line.strip() for line in f if line.strip() and not line.startswith("#")]
+    except FileNotFoundError:
         sys.exit(f"Error: wordlist not found: {args.wordlist}")
-
-    with open(args.wordlist) as f:
-        prefixes = [line.strip() for line in f if line.strip() and not line.startswith("#")]
 
     print(f"Domain: {args.domain} | Wordlist: {len(prefixes)} entries\n")
 

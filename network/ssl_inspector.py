@@ -40,7 +40,6 @@ def get_cert_info(host: str, port: int, timeout: float) -> dict:
         "expired": False,
     }
 
-    # Parse from dict (stdlib)
     subject = dict(x[0] for x in dict_cert.get("subject", []))
     info["subject_cn"] = subject.get("commonName", "")
     issuer = dict(x[0] for x in dict_cert.get("issuer", []))
@@ -57,7 +56,6 @@ def get_cert_info(host: str, port: int, timeout: float) -> dict:
             sans.append(san_val)
     info["sans"] = sans
 
-    # Expiry calculation
     if not_after_str:
         try:
             not_after = datetime.datetime.strptime(not_after_str, "%b %d %H:%M:%S %Y %Z")
@@ -69,7 +67,6 @@ def get_cert_info(host: str, port: int, timeout: float) -> dict:
         except ValueError:
             pass
 
-    # Richer info via cryptography package
     if HAS_CRYPTOGRAPHY and der_cert:
         try:
             cert = x509.load_der_x509_certificate(der_cert, default_backend())

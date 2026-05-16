@@ -83,58 +83,16 @@ if $STATS_ONLY; then
     BEGIN { total=0; chars=0 }
     { total++; chars += length($0) }
     END {
-        unique_cmd = "sort | uniq | wc -l"
         avg = (total > 0) ? chars/total : 0
         printf "Total lines:  %d\n", total
         printf "Avg length:   %.1f\n", avg
     }'
-    # unique count separately to avoid awk subprocess issues
+    # unique count requires a second pass; reads file again (not usable with stdin)
     unique=$(read_input | sort | uniq | wc -l)
     echo "Unique lines: $unique"
     exit 0
 fi
 
-pipeline() {
-    read_input
-
-    if [[ -n "$LENGTH_MIN" || -n "$LENGTH_MAX" ]]; then
-        local min="${LENGTH_MIN:-0}"
-        local max="${LENGTH_MAX:-99999}"
-        awk -v mn="$min" -v mx="$max" 'length >= mn && length <= mx'
-    else
-        cat
-    fi
-
-    if [[ -n "$FILTER_CHAR" ]]; then
-        grep -F -- "$FILTER_CHAR" || true
-    fi
-
-    if [[ -n "$EXCLUDE_PAT" ]]; then
-        grep -Ev -- "$EXCLUDE_PAT" || true
-    fi
-
-    if $DO_UPPER; then
-        tr '[:lower:]' '[:upper:]'
-    fi
-
-    if $DO_LOWER; then
-        tr '[:upper:]' '[:lower:]'
-    fi
-
-    if $DO_SORT || $DO_DEDUP; then
-        if $DO_DEDUP; then
-            sort -u
-        else
-            sort
-        fi
-    fi
-
-    if [[ -n "$LIMIT" ]]; then
-        head -n "$LIMIT"
-    fi
-}
-
-# Build the pipeline properly using process substitution
 run_pipeline() {
     local data
     data=$(read_input)

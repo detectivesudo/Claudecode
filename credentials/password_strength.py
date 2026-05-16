@@ -84,16 +84,16 @@ def analyze(password: str, verbose: bool) -> dict:
         score += 7
         details.append("Length ≥ 16 → +7 pts")
 
+    lower = password.lower()
+
     # Penalties
-    if password.lower() in COMMON_PASSWORDS:
+    if lower in COMMON_PASSWORDS:
         score -= 60
         details.append("Common password → -60 pts")
 
     if re.search(r"(.)\1{2,}", password):
         score -= 10
         details.append("Repeating characters → -10 pts")
-
-    lower = password.lower()
     for walk in KEYBOARD_WALKS:
         for window in range(4, len(walk) + 1):
             chunk = walk[:window]
