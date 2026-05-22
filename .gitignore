@@ -1,1 +1,35 @@
-node_modules/
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.venv/
+env/
+
+# Environment / secrets
+.env
+.env.local
+
+# Tool output artifacts
+*.json.out
+scan_results/
+output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sensitive data — never commit
+rainbow_tables/
